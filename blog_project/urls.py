@@ -14,15 +14,23 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# blog_project/urls.py
 from django.contrib import admin
 from django.urls import include, path
-from rest_framework.documentation import include_docs_urls
+# add these:
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
-API_TITLE       = 'Blog API'
-API_DESCRIPTION = 'A Web API for creating and editing blog posts.'
+# ... your existing code ...
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # JWT token endpoints (Simple JWT)
+    path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     # your API endpoints…
     path('api/v1/', include('posts.urls')),
@@ -30,13 +38,6 @@ urlpatterns = [
     path('api/v1/rest-auth/', include('dj_rest_auth.urls')),
     path('api/v1/rest-auth/registration/', include('dj_rest_auth.registration.urls')),
 
-    # CoreAPI–style interactive docs:
-    path('docs/', include_docs_urls(title=API_TITLE, description=API_DESCRIPTION)),
+    # (optional) docs...
+    # path('docs/', include_docs_urls(title=API_TITLE, description=API_DESCRIPTION)),
 ]
-
-
-
-
-# CoreJSONRenderer produces the CoreAPI-style JSON envelope.
-
-# BrowsableAPIRenderer lets you view it in the browser
